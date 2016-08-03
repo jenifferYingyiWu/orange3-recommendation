@@ -1,6 +1,6 @@
 import Orange
-from orangecontrib.recommendation import BRISMFLearner
 
+from abc import ABCMeta, abstractmethod
 from sklearn.metrics import mean_squared_error
 
 import unittest
@@ -8,17 +8,16 @@ import numpy as np
 import math
 import random
 
+__all__ = ["TestRatingModels"]
 
-class TestBRISMF(unittest.TestCase):
 
+class TestRatingModels(unittest.TestCase):
 
-    def test_BRISMF_predict_items(self):
-
+    def test_predict_items(self, learner, filename):
         # Load data
-        data = Orange.data.Table('ratings.tab')
+        data = Orange.data.Table(filename)
 
         # Train recommender
-        learner = BRISMFLearner(num_factors=2, num_iter=1, verbose=True)
         recommender = learner(data)
 
         # Compute predictions 1
@@ -40,13 +39,11 @@ class TestBRISMF(unittest.TestCase):
         self.assertEqual(len_u, num_users)
         self.assertEqual(len_i, num_items)
 
-    def test_BRISMF_input_data_discrete(self):
-
+    def test_input_data_discrete(self, learner, filename):
         # Load data
-        data = Orange.data.Table('ratings.tab')
+        data = Orange.data.Table(filename)
 
         # Train recommender
-        learner = BRISMFLearner(num_factors=2, num_iter=1, verbose=True)
         recommender = learner(data)
         print(str(recommender) + ' trained')
 
@@ -65,14 +62,11 @@ class TestBRISMF(unittest.TestCase):
         Q = recommender.getQTable()
         self.assertEqual(P.X.shape[1], Q.X.shape[1])
 
-    def test_BRISMF_input_data_continuous(self):
-
+    def test_input_data_continuous(self, learner, filename):
         # Load data
-        data = Orange.data.Table('ratings3.tab')
+        data = Orange.data.Table(filename)
 
         # Train recommender
-        learner = BRISMFLearner(num_factors=5, num_iter=10, min_rating=0,
-                                max_rating=5, verbose=False)
         recommender = learner(data)
 
         print(str(recommender) + ' trained')
@@ -92,13 +86,11 @@ class TestBRISMF(unittest.TestCase):
         Q = recommender.getQTable()
         self.assertEqual(P.X.shape[1], Q.X.shape[1])
 
-    def test_BRISMF_pairs(self):
-
+    def test_pairs(self, learner, filename):
         # Load data
-        data = Orange.data.Table('ratings.tab')
+        data = Orange.data.Table(filename)
 
         # Train recommender
-        learner = BRISMFLearner(num_factors=2, num_iter=1, verbose=False)
         recommender = learner(data)
 
         # Create indices to test
@@ -115,14 +107,13 @@ class TestBRISMF(unittest.TestCase):
         # Check correctness
         self.assertEqual(len(y_pred), sample_size)
 
-    def test_BRISMF_CV(self):
+    def test_CV(self, learner, filename):
         from Orange.evaluation.testing import CrossValidation
 
         # Load data
-        data = Orange.data.Table('ratings.tab')
+        data = Orange.data.Table(filename)
 
-        brismf = BRISMFLearner(num_factors=2, num_iter=1, verbose=False)
-        learners = [brismf]
+        learners = [learner]
 
         res = CrossValidation(data, learners, k=3)
         rmse = Orange.evaluation.RMSE(res)
@@ -135,68 +126,30 @@ class TestBRISMF(unittest.TestCase):
 
         self.assertIsInstance(rmse, np.ndarray)
 
-    def test_BRISMF_warnings(self):
+    def test_warnings(self, learner, filename):
         # Load data
-        data = Orange.data.Table('ratings.tab')
+        data = Orange.data.Table(filename)
 
-        # Train recommender
-        learner = BRISMFLearner(num_factors=2, num_iter=1, learning_rate=0.0,
-                                verbose=False)
-
+        # Train recommender and check warns
         self.assertWarns(UserWarning, learner, data)
 
-    def test_BRISMF_objective(self):
+    def test_objective(self, learner, filename):
         # Load data
-        data = Orange.data.Table('ratings3.tab')
+        data = Orange.data.Table(filename)
 
         steps = [1, 10, 30]
         objectives = []
 
         for step in steps:
-            learner = BRISMFLearner(num_factors=2, num_iter=step,
-                                    learning_rate=0.007, random_state=42,
-                                    verbose=True)
+            learner.num_iter = step
             recommender = learner(data)
             objective = recommender.compute_objective(data=data,
-                                                lmbda=learner.lmbda,
-                                                bias_lmbda=learner.bias_lmbda)
+                                                      lmbda=learner.lmbda,
+                                                      bias_lmbda=learner.bias_lmbda)
             print('>>>>>>>' + str(objective))
             objectives.append(objective)
 
         # Assert objective values decrease
-        test = list(map(lambda t: t[0]>=t[1], zip(objectives, objectives[1:])))
+        test = list(
+            map(lambda t: t[0] >= t[1], zip(objectives, objectives[1:])))
         self.assertTrue(all(test))
-
-    # def test_BRISMF_alpha_bias(self):
-    #     # Load data
-    #     data = Orange.data.Table('ratings.tab')
-    #
-    #     for random_state in range(5):
-    #         alpha_bias = [0, 0.007]
-    #         objectives = []
-    #         for alpha in alpha_bias:
-    #             learner = BRISMFLearner(num_factors=2, num_iter=50,
-    #                                     bias_learning_rate=alpha,
-    #                                     random_state=random_state)
-    #             recommender = learner(data)
-    #             objective = recommender.compute_objective(data=data,
-    #                                               lmbda=learner.lmbda,
-    #                                               bias_lmbda=learner.bias_lmbda)
-    #             objectives.append(objective)
-    #
-    #         # Assert objective values decrease for the given random state
-    #         test = list(
-    #             map(lambda t: t[0] >= t[1], zip(objectives, objectives[1:])))
-    #         self.assertTrue(all(test))
-
-
-if __name__ == "__main__":
-    # Test all
-    # unittest.main()
-
-    # Test single test
-    suite = unittest.TestSuite()
-    suite.addTest(TestBRISMF("test_BRISMF_objective"))
-    runner = unittest.TextTestRunner()
-    runner.run(suite)
-
