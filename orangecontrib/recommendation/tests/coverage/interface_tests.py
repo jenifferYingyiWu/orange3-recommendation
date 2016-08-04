@@ -1,6 +1,5 @@
 import Orange
 
-from abc import ABCMeta, abstractmethod
 from sklearn.metrics import mean_squared_error
 
 import unittest
@@ -11,7 +10,13 @@ import random
 __all__ = ["TestRatingModels"]
 
 
-class TestRatingModels(unittest.TestCase):
+class TestRatingModels:
+
+    # @classmethod
+    # def setUpClass(cls):
+    #     if cls is TestRatingModels:
+    #         raise unittest.SkipTest("Skip BaseTest tests, it's a base class")
+    #     super(TestRatingModels, cls).setUpClass()
 
     def test_predict_items(self, learner, filename):
         # Load data
@@ -153,3 +158,7 @@ class TestRatingModels(unittest.TestCase):
         test = list(
             map(lambda t: t[0] >= t[1], zip(objectives, objectives[1:])))
         self.assertTrue(all(test))
+
+if __name__ == "__main__":
+    # Test all
+    unittest.main()
