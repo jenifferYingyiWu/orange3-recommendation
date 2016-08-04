@@ -1,2 +1,2 @@
-from orangecontrib.recommendation.tests.coverage.interface_tests \
+from orangecontrib.recommendation.tests.coverage.base_tests \
     import TestRatingModels

@@ -62,11 +62,6 @@ class TestRatingModels:
         # Check correctness
         self.assertGreaterEqual(rmse, 0)
 
-        # Check tables P and Q
-        P = recommender.getPTable()
-        Q = recommender.getQTable()
-        self.assertEqual(P.X.shape[1], Q.X.shape[1])
-
     def test_input_data_continuous(self, learner, filename):
         # Load data
         data = Orange.data.Table(filename)
@@ -85,11 +80,6 @@ class TestRatingModels:
 
         # Check correctness
         self.assertGreaterEqual(rmse, 0)
-
-        # Check tables P and Q
-        P = recommender.getPTable()
-        Q = recommender.getQTable()
-        self.assertEqual(P.X.shape[1], Q.X.shape[1])
 
     def test_pairs(self, learner, filename):
         # Load data
@@ -137,27 +127,6 @@ class TestRatingModels:
 
         # Train recommender and check warns
         self.assertWarns(UserWarning, learner, data)
-
-    def test_objective(self, learner, filename):
-        # Load data
-        data = Orange.data.Table(filename)
-
-        steps = [1, 10, 30]
-        objectives = []
-
-        for step in steps:
-            learner.num_iter = step
-            recommender = learner(data)
-            objective = recommender.compute_objective(data=data,
-                                                      lmbda=learner.lmbda,
-                                                      bias_lmbda=learner.bias_lmbda)
-            print('>>>>>>>' + str(objective))
-            objectives.append(objective)
-
-        # Assert objective values decrease
-        test = list(
-            map(lambda t: t[0] >= t[1], zip(objectives, objectives[1:])))
-        self.assertTrue(all(test))
 
 if __name__ == "__main__":
     # Test all
