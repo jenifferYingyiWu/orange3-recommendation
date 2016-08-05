@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # Test single test
     suite = unittest.TestSuite()
-    suite.addTest(TestTrustSVD("test_objective"))
+    suite.addTest(TestTrustSVD("test_input_data_continuous"))
     runner = unittest.TextTestRunner()
     runner.run(suite)
 

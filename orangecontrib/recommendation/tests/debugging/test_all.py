@@ -1,6 +1,5 @@
 import unittest
 
-
 def run_tests():
     testmodules = [
         'test_global_avg',
@@ -13,6 +12,10 @@ def run_tests():
         'test_trustsvd',
         'test_chunks'
     ]
+
+    # Build paths
+    base_path = 'orangecontrib.recommendation.tests.coverage.'
+    testmodules = [base_path + m for m in testmodules]
 
     suite = unittest.TestSuite()
     for t in testmodules:

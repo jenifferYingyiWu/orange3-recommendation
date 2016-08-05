@@ -49,7 +49,8 @@ def test_learners():
 
     # BRISMF
     start = time.time()
-    learner = BRISMFLearner(K=15, steps=10, alpha=0.07, beta=0.1, verbose=False)
+    learner = BRISMFLearner(num_factors=15, num_iter=10, learning_rate=0.07,
+                            lmbda=0.1, verbose=False)
     recommender = learner(data)
     print('- Time (BRISMFLearner): %.3fs' % (time.time() - start))
     rmse = math.sqrt(mean_squared_error(data.Y, recommender(data)))
@@ -57,7 +58,8 @@ def test_learners():
 
     # SVD++
     start = time.time()
-    learner = SVDPlusPlusLearner(K=15, steps=10, alpha=0.07, beta=0.1, verbose=False)
+    learner = SVDPlusPlusLearner(num_factors=15, num_iter=10,
+                                 learning_rate=0.07, lmbda=0.1, verbose=False)
     recommender = learner(data)
     print('- Time (SVDPlusPlusLearner): %.3fs' % (time.time() - start))
     rmse = math.sqrt(mean_squared_error(data.Y, recommender(data)))
@@ -75,10 +77,12 @@ def test_CV():
     items_avg = ItemAvgLearner()
     users_avg = UserAvgLearner()
     useritem_baseline = UserItemBaselineLearner()
-    brismf = BRISMFLearner(K=15, steps=10, alpha=0.07, beta=0.1)
-    svdpp = SVDPlusPlusLearner(K=15, steps=10, alpha=0.007, beta=0.1)
-    trustsvd = TrustSVDLearner(K=15, steps=10, alpha=0.007, beta=0.1,
-                               beta_trust=0.05, trust=trust)
+    brismf = BRISMFLearner(num_factors=15, num_iter=10, learning_rate=0.07,
+                           lmbda=0.1)
+    svdpp = SVDPlusPlusLearner(num_factors=15, num_iter=10, learning_rate=0.007,
+                               lmbda=0.1)
+    trustsvd = TrustSVDLearner(num_factors=15, num_iter=10, learning_rate=0.007,
+                               lmbda=0.1, social_lmbda=0.05, trust=trust)
     learners = [global_avg, items_avg, users_avg, useritem_baseline,
                 brismf, svdpp, trustsvd]
 
