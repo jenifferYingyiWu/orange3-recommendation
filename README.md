@@ -116,7 +116,6 @@ Performance
 | Item Average       | 0.942 |  -  |     0.256s    |              -             |
 | User Average       | 0.970 |  -  |     0.256s    |              -             |
 | User-Item Baseline | 0.877 |  -  |     0.361s    |              -             |
-| BRISMF             | 0.841 |  -  | 138.309s/iter | num_factors=15; learning_rate=0.07; lmbda=0.1 |
 
 
         
