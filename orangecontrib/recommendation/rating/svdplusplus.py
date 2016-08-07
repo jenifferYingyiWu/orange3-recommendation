@@ -443,7 +443,7 @@ class SVDPlusPlusModel(Model):
         return feature_matrix(variable, self.Y, domain_name)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     import Orange
 
     print('Loading data...')
