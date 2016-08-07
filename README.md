@@ -96,8 +96,7 @@ Performance
 | Item Average       | 1.000 |  -  |    0.001s    |              -             |
 | User Average       | 1.031 |  -  |    0.001s    |              -             |
 | User-Item Baseline | 0.938 |  -  |    0.001s    |              -             |
-| BRISMF             | 0.823 |  -  |  1.453s/iter | num_factors=15; learning_rate=0.07; lmbda=0.1 |
-| SVD++              | 0.836 |  -  |  7.991s/iter | num_factors=15; learning_rate=0.07; lmbda=0.1 |
+| BRISMF             | - |  -  |  2.067s/iter | num_factors=15; learning_rate=0.07; lmbda=0.1 |
 
 **MovieLens1M:** (Loading time: 4.535s)
 
@@ -107,8 +106,6 @@ Performance
 | Item Average       | 0.975 |  -  |    0.018s     |              -             |
 | User Average       | 1.028 |  -  |    0.021s     |              -             |
 | User-Item Baseline | 0.924 |  -  |    0.027s     |              -             |
-| BRISMF             | 0.872 |  -  | 14.347s/iter  | num_factors=15; learning_rate=0.07; lmbda=0.1 |
-| SVD++              | 0.896 |  -  | 114.665s/iter | num_factors=15; learning_rate=0.07; lmbda=0.1 |
 
 
 **MovieLens10M:** (Loading time: 49.804s)
